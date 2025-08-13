@@ -7,16 +7,7 @@ import {
 } from "@heroui/react";
 import { Link as RouterLink, Outlet, useNavigate } from "react-router-dom";
 
-export const AcmeLogo = () => (
-  <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
-    <path
-      clipRule="evenodd"
-      d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-      fill="currentColor"
-      fillRule="evenodd"
-    />
-  </svg>
-);
+
 
 export default function Principal() {
   const navigate = useNavigate();
@@ -31,15 +22,24 @@ export default function Principal() {
       {/* Sidebar */}
       <nav className="w-64 bg-gray-100 p-6 flex flex-col gap-6">
         <h2 className="text-xl font-bold mb-4">Menú</h2>
-        <Link as={RouterLink} to="/api/biblioteca" className="text-blue-600 hover:underline">
-          Bibliotecas
+        <Link as={RouterLink} to="/api/biblioteca" className="text-black hover:underline">
+            Bibliotecas
         </Link>
-        <Link as={RouterLink} to="/api/autor" className="text-blue-600 hover:underline">
-          Autores
+        <Link as={RouterLink} to="/api/autor" className="text-black hover:underline">
+            Autores
         </Link>
-        <Link as={RouterLink} to="/api/libro" className="text-blue-600 hover:underline">
-          Libros
+        <Link as={RouterLink} to="/api/libro" className="text-black hover:underline">
+           Libros
         </Link>
+        <Button 
+            color="default" 
+            variant="flat" 
+            onPress={handleLogout} 
+            className="mt-auto text-sm bg-gray-300 text-gray-700">
+            Cerrar Sesión
+        </Button>
+
+
       </nav>
 
       {/* Contenido principal */}
@@ -47,13 +47,9 @@ export default function Principal() {
         {/* Navbar */}
         <Navbar position="static" className="bg-white shadow-md">
           <NavbarBrand>
-            <AcmeLogo />
-            <p className="font-bold text-inherit ml-2">Sistema para biblioteca</p>
+            <p className="font-bold text-inherit ml-2 text-center w-full">Sistema para biblioteca</p>
           </NavbarBrand>
           <NavbarContent justify="end">
-            <Button color="danger" variant="flat" onPress={handleLogout}>
-              Cerrar Sesión
-            </Button>
           </NavbarContent>
         </Navbar>
 

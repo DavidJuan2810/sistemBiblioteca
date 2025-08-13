@@ -37,13 +37,13 @@ export const obtenerBibliotecaPorId = async (req, res) => {
 // Crear una nueva biblioteca
 export const crearBiblioteca = async (req, res) => {
   try {
-    const { nombre, ubicacion, libro } = req.body; 
+    const { nombre, ubicacion, libroIds } = req.body; // Cambiado de 'libro' a 'libroIds'
 
     const nuevaBiblioteca = await prisma.bibliotecas.create({
       data: {
         nombre,
         ubicacion,
-        libros: libro ? { connect: libro.map(id => ({ id })) } : undefined
+        libros: libroIds ? { connect: libroIds.map(id => ({ id })) } : undefined
       },
       include: { libros: true } 
     });
@@ -59,9 +59,9 @@ export const crearBiblioteca = async (req, res) => {
 export const actualizarBiblioteca = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, ubicacion, libro } = req.body;
+    const { nombre, ubicacion, libros } = req.body;
 
-    const bibliotecaExistente = await prisma.libro.findUnique({
+    const bibliotecaExistente = await prisma.bibliotecas.findUnique({
       where: { id: parseInt(id) }
     });
 
@@ -74,7 +74,7 @@ export const actualizarBiblioteca = async (req, res) => {
       data: {
         nombre,
         ubicacion,
-        libros: libro ? { set: libro.map(id => ({ id })) } : undefined 
+        libros: libros ? { set: libros.map(id => ({ id })) } : undefined 
       },
       include: { libros: true } 
     });

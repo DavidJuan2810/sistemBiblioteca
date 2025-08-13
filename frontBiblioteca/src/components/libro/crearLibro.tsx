@@ -4,6 +4,7 @@ import { DateValue } from "@internationalized/date";
 import { useCrearLibro } from "../../hook/libro/useCrearLibro";
 import { useListarAutores } from "../../hook/useAutor";
 import { useListarBibliotecas } from "../../hook/biblioteca/useBiblioteca";
+import { useToast } from "../globales/toast";
 
 interface Props {
   onSuccess: () => void;
@@ -12,28 +13,50 @@ interface Props {
 export default function CrearLibro({ onSuccess }: Props) {
   const [titulo, setTitulo] = useState("");
   const [publicacion, setPublicacion] = useState<DateValue | null>(null);
-  const [autorIds, setAutorIds] = useState<number[]>([]);
-  const [sedeIds, setSedeIds] = useState<number[]>([]);
+  const [autor, setAutor] = useState<number[]>([]);
+  const [sede, setSede] = useState<number[]>([]);
 
+  const { showToast } = useToast();
   const { data: autores } = useListarAutores();
   const { data: bibliotecas } = useListarBibliotecas();
   const crearLibroMutation = useCrearLibro();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!titulo.trim()) {
+      showToast("El título es obligatorio", "error");
+      return;
+    }
+    if (!publicacion) {
+      showToast("La fecha de publicación es obligatoria", "error");
+      return;
+    }
+    if (autor.length === 0) {
+      showToast("Debe seleccionar al menos un autor", "error");
+      return;
+    }
+    if (sede.length === 0) {
+      showToast("Debe seleccionar al menos una sede", "error");
+      return;
+    }
+
+    const publicacionISO = new Date(
+      publicacion.year,
+      publicacion.month - 1,
+      publicacion.day
+    ).toISOString();
+
     crearLibroMutation.mutate(
-      {
-        titulo,
-        publicacion: publicacion ? publicacion.toString() : "",
-        autorIds,
-        sedeIds,
-      },
+      { titulo, publicacion: publicacionISO, autor, sede },
       {
         onSuccess: () => {
-          alert("Libro creado!");
+          showToast("Libro creado correctamente", "success");
           onSuccess();
         },
-        onError: (err) => alert(`Error: ${err.message}`),
+        onError: (err) => {
+          showToast(`Error: ${err.message}`, "error");
+        },
       }
     );
   };
@@ -57,9 +80,8 @@ export default function CrearLibro({ onSuccess }: Props) {
       <Select
         label="Autores"
         selectionMode="multiple"
-        onSelectionChange={(keys) =>
-          setAutorIds(Array.from(keys as Set<string>).map(Number))
-        }
+        selectedKeys={autor.map(String)}
+        onSelectionChange={(keys) => setAutor(Array.from(keys as Set<string>).map(Number))}
       >
         {(autores ?? []).map((a) => (
           <SelectItem key={a.id}>{a.nombre}</SelectItem>
@@ -68,16 +90,15 @@ export default function CrearLibro({ onSuccess }: Props) {
       <Select
         label="Sedes"
         selectionMode="multiple"
-        onSelectionChange={(keys) =>
-          setSedeIds(Array.from(keys as Set<string>).map(Number))
-        }
+        selectedKeys={sede.map(String)}
+        onSelectionChange={(keys) => setSede(Array.from(keys as Set<string>).map(Number))}
       >
         {(bibliotecas ?? []).map((b) => (
           <SelectItem key={b.id}>{b.nombre}</SelectItem>
         ))}
       </Select>
       <Button
-        color="primary"
+        className="text-sm bg-gray-300 text-gray-700"
         type="submit"
         isLoading={crearLibroMutation.isPending}
       >

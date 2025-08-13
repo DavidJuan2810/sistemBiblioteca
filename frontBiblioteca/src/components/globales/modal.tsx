@@ -39,7 +39,7 @@ export default function ModalGlobal({
             <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
             <ModalBody>{children}</ModalBody>
             <ModalFooter>
-              <Button color="default" variant="light" onPress={onClose}>
+              <Button className="text-sm bg-gray-300 text-gray-700" variant="light" onPress={onClose}>
                 Close
               </Button>
               {onAction && (

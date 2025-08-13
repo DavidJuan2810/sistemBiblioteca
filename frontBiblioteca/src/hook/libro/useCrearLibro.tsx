@@ -3,16 +3,16 @@ import axios from "axios";
 
 export interface CrearLibroPayload {
   titulo: string;
-  publicacion: string; // ISO date string
-  autorIds?: number[];
-  sedeIds?: number[];
+  publicacion: string;   // ISO string completa
+  autor?: number[];
+  sede?: number[];
 }
 
 export interface Libro {
   id: number;
   titulo: string;
   publicacion: string;
-  autores?: { id: number; nombre: string }[];
+  autor?: { id: number; nombre: string }[];
   sede?: { id: number; nombre: string }[];
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button } from "@heroui/react";
 import { useActualizarAutor } from "../../hook/useActualizarAutor";
 import { useListarAutores } from "../../hook/useAutor";
+import { useToast } from "../globales/toast";
 
 interface Props {
   autorId: number;
@@ -15,6 +16,9 @@ export default function ActualizarAutor({ autorId, onSuccess }: Props) {
   const [nombre, setNombre] = useState("");
   const [nacionalidad, setNacionalidad] = useState("");
 
+  const { showToast } = useToast();
+  const actualizarAutorMutation = useActualizarAutor(autorId);
+
   useEffect(() => {
     if (autor) {
       setNombre(autor.nombre);
@@ -22,19 +26,21 @@ export default function ActualizarAutor({ autorId, onSuccess }: Props) {
     }
   }, [autor]);
 
-  const actualizarAutorMutation = useActualizarAutor(autorId);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!nombre || !nacionalidad) {
+      showToast("Nombre y nacionalidad son obligatorios", "error");
+      return;
+    }
     actualizarAutorMutation.mutate(
       { nombre, nacionalidad },
       {
         onSuccess: () => {
-          alert("Autor actualizado!");
+          showToast("Autor actualizado correctamente", "success");
           onSuccess();
         },
         onError: (err) => {
-          alert(`Error: ${err.message}`);
+          showToast(`Error: ${err.message}`, "error");
         },
       }
     );
@@ -70,7 +76,7 @@ export default function ActualizarAutor({ autorId, onSuccess }: Props) {
         onChange={(e) => setNacionalidad(e.target.value)}
       />
       <Button
-        color="primary"
+        className="text-sm bg-gray-300 text-gray-700"
         type="submit"
         isLoading={actualizarAutorMutation.isPending}
       >

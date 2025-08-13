@@ -16,7 +16,6 @@ export default function Formulario() {
     >
       <Input
         isRequired
-        errorMessage="Please enter a valid username"
         label="Username"
         labelPlacement="outside"
         name="username"

@@ -3,6 +3,7 @@ import { Form, Input, Button, Select, SelectItem } from "@heroui/react";
 import { useActualizarBiblioteca } from "../../hook/biblioteca/useActualizarBiblioteca";
 import { useListarBibliotecas } from "../../hook/biblioteca/useBiblioteca";
 import { useListarLibros } from "../../hook/libro/useLibro";
+import { useToast } from "../globales/toast";
 
 interface Props {
   bibliotecaId: number;
@@ -20,6 +21,9 @@ export default function ActualizarBiblioteca({ bibliotecaId, onSuccess }: Props)
   const [ubicacion, setUbicacion] = useState("");
   const [libroIds, setLibroIds] = useState<number[]>([]);
 
+  const { showToast } = useToast();
+  const actualizarBibliotecaMutation = useActualizarBiblioteca(bibliotecaId);
+
   useEffect(() => {
     if (biblioteca) {
       setNombre(biblioteca.nombre);
@@ -28,19 +32,24 @@ export default function ActualizarBiblioteca({ bibliotecaId, onSuccess }: Props)
     }
   }, [biblioteca]);
 
-  const actualizarBibliotecaMutation = useActualizarBiblioteca(bibliotecaId);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 🔹 Validaciones antes de enviar
+    if (!nombre.trim() || !ubicacion.trim()) {
+      showToast("Nombre y ubicación son obligatorios", "error");
+      return;
+    }
+
     actualizarBibliotecaMutation.mutate(
-      { nombre, ubicacion, libroIds },
+      { nombre, ubicacion, libroIds }, // ✅ enviamos solo IDs
       {
         onSuccess: () => {
-          alert("Biblioteca actualizada!");
+          showToast("Biblioteca actualizada correctamente", "success");
           onSuccess();
         },
         onError: (err) => {
-          alert(`Error: ${err.message}`);
+          showToast(`Error: ${err.message}`, "error");
         },
       }
     );
@@ -83,7 +92,7 @@ export default function ActualizarBiblioteca({ bibliotecaId, onSuccess }: Props)
         ))}
       </Select>
       <Button
-        color="primary"
+        className="text-sm bg-gray-300 text-gray-700"
         type="submit"
         isLoading={actualizarBibliotecaMutation.isPending}
       >

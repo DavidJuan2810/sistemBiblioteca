@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -35,81 +35,79 @@ export default function ListaLibros({ onEditarLibro, onAbrirCrearModal }: Props)
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <Table
-      aria-label="Lista de libros con paginación"
-      bottomContent={
-        <div className="flex w-full justify-between items-center">
-          <Button color="primary" onPress={onAbrirCrearModal}>
-            Crear Libro
-          </Button>
-          {pages > 0 && (
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color="primary"
-              page={page}
-              total={pages}
-              onChange={(newPage) => setPage(newPage)}
-            />
-          )}
-        </div>
-      }
-    >
-      <TableHeader>
-        <TableColumn key="titulo">Título</TableColumn>
-        <TableColumn key="publicacion">Publicación</TableColumn>
-        <TableColumn key="autores">Autores</TableColumn>
-        <TableColumn key="sede">Sedes</TableColumn>
-        <TableColumn key="acciones">Acciones</TableColumn>
-      </TableHeader>
-      <TableBody
-        items={items}
-        loadingContent={<Spinner />}
-        loadingState={isLoading ? "loading" : "idle"}
+    <div className="w-full">
+      {/* Botón arriba a la izquierda */}
+      <div className="flex justify-start items-center mb-2">
+        <Button
+          className="text-sm bg-gray-300 text-gray-700"
+          onPress={() => onAbrirCrearModal()}
+        >
+          Crear Libro
+        </Button>
+      </div>
+
+      <Table
+        aria-label="Lista de libros con paginación"
+        bottomContent={
+          pages > 0 ? (
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="default"
+                page={page}
+                total={pages}
+                onChange={(newPage) => setPage(newPage)}
+              />
+            </div>
+          ) : null
+        }
       >
-        {(libro: Libro) => (
-          <TableRow key={libro.id}>
-            {(columnKey) => {
-              if (columnKey === "acciones") {
-                return (
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      color="secondary"
-                      onPress={() => onEditarLibro(libro.id)}
-                    >
-                      Editar
-                    </Button>
-                  </TableCell>
-                );
-              }
-              if (columnKey === "autores") {
-                return (
-                  <TableCell>
-                    {libro.autores?.map((a) => a.nombre).join(", ") || "—"}
-                  </TableCell>
-                );
-              }
-              if (columnKey === "sede") {
-                return (
-                  <TableCell>
-                    {libro.sede?.map((s) => s.nombre).join(", ") || "—"}
-                  </TableCell>
-                );
-              }
-              if (columnKey === "publicacion") {
-                return (
-                  <TableCell>
-                    {new Date(libro.publicacion).toLocaleDateString()}
-                  </TableCell>
-                );
-              }
-              return <TableCell>{getKeyValue(libro, columnKey)}</TableCell>;
-            }}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader>
+          <TableColumn key="titulo">Título</TableColumn>
+          <TableColumn key="publicacion">Publicación</TableColumn>
+          <TableColumn key="autores">Autores</TableColumn>
+          <TableColumn key="sede">Sedes</TableColumn>
+          <TableColumn key="acciones">Acciones</TableColumn>
+        </TableHeader>
+
+        <TableBody
+          items={items}
+          loadingContent={<Spinner />}
+          loadingState={isLoading ? "loading" : "idle"}
+        >
+          {(libro: Libro) => (
+            <TableRow key={libro.id}>
+              {(columnKey) => {
+                if (columnKey === "acciones") {
+                  return (
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className="text-sm bg-gray-300 text-gray-700"
+                        onPress={() => onEditarLibro(libro.id)}
+                      >
+                        Editar
+                      </Button>
+                    </TableCell>
+                  );
+                }
+                if (columnKey === "autores") {
+                  return <TableCell>{libro.autores?.map((a) => a.nombre).join(", ") || "—"}</TableCell>;
+                }
+                if (columnKey === "sede") {
+                  return <TableCell>{libro.sede?.map((s) => s.nombre).join(", ") || "—"}</TableCell>;
+                }
+                if (columnKey === "publicacion") {
+                  return <TableCell>{new Date(libro.publicacion).toLocaleDateString()}</TableCell>;
+                }
+                return <TableCell>{getKeyValue(libro, columnKey as string)}</TableCell>;
+              }}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

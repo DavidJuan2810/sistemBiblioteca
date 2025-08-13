@@ -43,8 +43,8 @@ export const crearLibro = async (req, res) => {
             data: {
                 titulo,
                 publicacion,
-                sede: sedeId ? {connect: sede.map(id => ({id})) } : undefined,
-                autores: autorId ? {connect: autor.map(id => ({id})) } : undefined
+                sede: sede ? {connect: sede.map(id => ({id})) } : undefined,
+                autores: autor ? {connect: autor.map(id => ({id})) } : undefined
             },
             include: {sede: true, autores: true}
         });

@@ -5,8 +5,8 @@ export interface Libro {
   id: number;
   titulo: string;
   publicacion: string; // ISO string
-  autores?: { id: number; nombre: string }[];
-  sede?: { id: number; nombre: string }[];
+  autores?: { id: number; nombre: string }[]; // 
+  sede?: { id: number; nombre: string }[]; 
 }
 
 export const useListarLibros = () => {

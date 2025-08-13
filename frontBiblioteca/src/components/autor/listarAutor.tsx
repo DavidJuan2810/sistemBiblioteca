@@ -15,7 +15,7 @@ import { useListarAutores, Autor } from "../../hook/useAutor";
 
 interface Props {
   onEditarAutor: (id: number) => void;
-  onAbrirCrearModal: () => void; // Nueva prop para abrir modal de crear
+  onAbrirCrearModal: () => void;
 }
 
 export default function ListaAutores({ onEditarAutor, onAbrirCrearModal }: Props) {
@@ -35,57 +35,67 @@ export default function ListaAutores({ onEditarAutor, onAbrirCrearModal }: Props
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <Table
-      aria-label="Lista de autores con paginación"
-      bottomContent={
-        <div className="flex w-full justify-between items-center">
-          <Button color="primary" onPress={onAbrirCrearModal}>
-            Crear Autor
-          </Button>
-          {pages > 0 && (
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color="primary"
-              page={page}
-              total={pages}
-              onChange={(newPage) => setPage(newPage)}
-            />
-          )}
-        </div>
-      }
-    >
-      <TableHeader>
-        <TableColumn key="nombre">Nombre</TableColumn>
-        <TableColumn key="nacionalidad">Nacionalidad</TableColumn>
-        <TableColumn key="acciones">Acciones</TableColumn>
-      </TableHeader>
-      <TableBody
-        items={items}
-        loadingContent={<Spinner />}
-        loadingState={isLoading ? "loading" : "idle"}
+    <div className="w-full">
+      {/* Botón arriba a la izquierda (llama correctamente la prop) */}
+      <div className="flex justify-start items-center mb-2">
+        <Button
+          className="text-sm bg-gray-300 text-gray-700"
+          onPress={() => onAbrirCrearModal()} // <-- llama al modal del padre
+        >
+          Crear Autor
+        </Button>
+      </div>
+
+      <Table
+        aria-label="Lista de autores con paginación"
+        bottomContent={
+          pages > 0 ? (
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="default"
+                page={page}
+                total={pages}
+                onChange={(newPage) => setPage(newPage)}
+              />
+            </div>
+          ) : null
+        }
       >
-        {(autor: Autor) => (
-          <TableRow key={autor.id}>
-            {(columnKey) =>
-              columnKey === "acciones" ? (
-                <TableCell>
-                  <Button
-                    size="sm"
-                    color="secondary"
-                    onPress={() => onEditarAutor(autor.id)}
-                  >
-                    Editar
-                  </Button>
-                </TableCell>
-              ) : (
-                <TableCell>{getKeyValue(autor, columnKey)}</TableCell>
-              )
-            }
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader>
+          <TableColumn key="nombre">Nombre</TableColumn>
+          <TableColumn key="nacionalidad">Nacionalidad</TableColumn>
+          <TableColumn key="acciones">Acciones</TableColumn>
+        </TableHeader>
+
+        <TableBody
+          items={items}
+          loadingContent={<Spinner />}
+          loadingState={isLoading ? "loading" : "idle"}
+        >
+          {(autor: Autor) => (
+            <TableRow key={autor.id}>
+              {(columnKey) =>
+                columnKey === "acciones" ? (
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      className="text-sm bg-gray-300 text-gray-700"
+                      onPress={() => onEditarAutor(autor.id)}
+                    >
+                      Editar
+                    </Button>
+                  </TableCell>
+                ) : (
+                  <TableCell>{getKeyValue(autor, columnKey as string)}</TableCell>
+                )
+              }
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

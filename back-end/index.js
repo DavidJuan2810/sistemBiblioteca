@@ -5,9 +5,7 @@ import rutaBiblioteca from './src/rutas/rutaBiblioteca.js';
 import rutaLibro from './src/rutas/rutaLibro.js';
 import rutaAutor from './src/rutas/rutaAutor.js';
 import rutaUsuario from './src/rutas/rutaUsuario.js';
-
-dotenv.config(); // Cargar variables de entorno
-
+dotenv.config({ override: true, debug: false });
 const app = express();
 
 // Middlewares

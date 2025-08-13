@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Input } from "@heroui/react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useToast } from "../globales/toast";
 
 export default function Login() {
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
-  const [error, setError] = useState("");
+  const { showToast } = useToast();
   const navigate = useNavigate();
-
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
+
+    // Validaciones
+    if (!correo.trim()) {
+      showToast("El correo es obligatorio", "error");
+      return;
+    }
+    if (!contraseña.trim()) {
+      showToast("La contraseña es obligatoria", "error");
+      return;
+    }
+
     try {
       const { data } = await axios.post(`${apiUrl}/login`, {
         correo,
@@ -21,16 +31,23 @@ export default function Login() {
       });
 
       localStorage.setItem("token", data.token);
-      alert("Login exitoso!");
-      navigate("/app/autor"); // Redirige a /app/autor tras login
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Error en el login");
+      showToast("Inicio de sesión exitoso", "success");
+      navigate("/api/autor");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        showToast(err.response?.data?.message || "Error en el login", "error");
+      } else {
+        showToast("Error desconocido en el login", "error");
+      }
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="max-w-md w-full space-y-4 p-6 border rounded shadow-lg bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-md w-full space-y-4 p-6 bg-gray-200 rounded"
+      >
         <h2 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h2>
         <Input
           label="Correo"
@@ -46,10 +63,20 @@ export default function Login() {
           onChange={(e) => setContraseña(e.target.value)}
           required
         />
-        <Button type="submit" color="primary" fullWidth>
+        <Button
+          type="submit"
+          color="default"
+          fullWidth
+          className="bg-black text-white hover:bg-gray-900"
+        >
           Entrar
         </Button>
-        {error && <p className="text-red-600 text-center">{error}</p>}
+
+        <p className="text-center text-sm">
+          <Link to="/register" className="text-white-300 hover:underline">
+            Regístrate aquí
+          </Link>
+        </p>
       </form>
     </div>
   );

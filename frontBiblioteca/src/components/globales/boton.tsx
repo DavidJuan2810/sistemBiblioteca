@@ -4,7 +4,7 @@ export default function App() {
   return (
     <Button
       isLoading
-      color="secondary"
+      className="bg-white text-black !text-black border border-gray-300" 
       spinner={
         <svg
           className="animate-spin h-5 w-5 text-current"

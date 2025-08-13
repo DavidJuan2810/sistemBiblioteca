@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "@heroui/react";
 import { useCrearAutor } from "../../hook/useCrearAutor";
+import { useToast } from "../globales/toast";
 
 interface Props {
   onSuccess: () => void; // Para cerrar modal tras éxito
@@ -10,19 +11,27 @@ export default function CrearAutor({ onSuccess }: Props) {
   const [nombre, setNombre] = useState("");
   const [nacionalidad, setNacionalidad] = useState("");
 
+  const { showToast } = useToast();
   const crearAutorMutation = useCrearAutor();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 🔹 Validación antes de enviar
+    if (!nombre.trim() || !nacionalidad.trim()) {
+      showToast("Nombre y nacionalidad son obligatorios", "error");
+      return;
+    }
+
     crearAutorMutation.mutate(
       { nombre, nacionalidad },
       {
         onSuccess: () => {
-          alert("Autor creado!");
+          showToast("Autor creado correctamente", "success");
           onSuccess(); // Cierra modal
         },
         onError: (err) => {
-          alert(`Error: ${err.message}`);
+          showToast(`Error: ${err.message}`, "error");
         },
       }
     );
@@ -54,7 +63,7 @@ export default function CrearAutor({ onSuccess }: Props) {
         onChange={(e) => setNacionalidad(e.target.value)}
       />
       <Button
-        color="primary"
+        className="text-sm bg-gray-300 text-gray-700"
         type="submit"
         isLoading={crearAutorMutation.isPending}
       >

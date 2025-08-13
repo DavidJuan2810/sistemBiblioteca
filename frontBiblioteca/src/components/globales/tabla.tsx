@@ -44,7 +44,7 @@ export default function GlobalTable() {
               isCompact
               showControls
               showShadow
-              color="primary"
+              className="bg-white text-black !text-black border border-gray-300" 
               page={page}
               total={pages}
               onChange={(page) => setPage(page)}

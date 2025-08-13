@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, UseMutationResult } from "@tanstack/react-query";
 import axios from "axios";
 
+// ✅ Cambiamos 'libros' a 'libroIds' para que coincida con lo que enviamos desde el frontend
 export interface ActualizarBibliotecaPayload {
   nombre: string;
   ubicacion: string;
@@ -28,7 +29,7 @@ export const useActualizarBiblioteca = (
 
       const { data } = await axios.put(
         `${apiUrl}/biblioteca/${id}`,
-        bibliotecaActualizada,
+        bibliotecaActualizada, // ✅ ahora envía libroIds
         {
           headers: {
             Authorization: `Bearer ${token}`,

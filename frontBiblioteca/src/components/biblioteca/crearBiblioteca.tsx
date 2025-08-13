@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Select, SelectItem } from "@heroui/react";
 import { useCrearBiblioteca } from "../../hook/biblioteca/useCrearBiblioteca";
 import { useListarLibros } from "../../hook/libro/useLibro";
+import { useToast } from "../globales/toast";
 
 interface Props {
   onSuccess: () => void;
@@ -14,18 +15,26 @@ export default function CrearBiblioteca({ onSuccess }: Props) {
 
   const { data: libros } = useListarLibros();
   const crearBibliotecaMutation = useCrearBiblioteca();
+  const { showToast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!nombre || !ubicacion) {
+      showToast("Nombre y ubicación son obligatorios", "error");
+      return;
+    }
+    if (libroIds.length === 0) {
+      showToast("No se seleccionaron libros", "warning");
+    }
     crearBibliotecaMutation.mutate(
       { nombre, ubicacion, libroIds },
       {
         onSuccess: () => {
-          alert("Biblioteca creada!");
+          showToast("Biblioteca creada correctamente", "success");
           onSuccess();
         },
         onError: (err) => {
-          alert(`Error: ${err.message}`);
+          showToast(`Error: ${err.message}`, "error");
         },
       }
     );
@@ -63,7 +72,7 @@ export default function CrearBiblioteca({ onSuccess }: Props) {
         ))}
       </Select>
       <Button
-        color="primary"
+        className="text-sm bg-gray-300 text-gray-700"
         type="submit"
         isLoading={crearBibliotecaMutation.isPending}
       >
