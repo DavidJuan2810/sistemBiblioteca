@@ -44,13 +44,16 @@ export default function CrearAutor({ onSuccess }: Props) {
     >
       <Input
         isRequired
-        label="Nombre"
+        label="Nombre" className="text-gray-200 !important"
         labelPlacement="outside"
         name="nombre"
         placeholder="Ingrese el nombre"
         type="text"
         value={nombre}
         onChange={(e) => setNombre(e.target.value)}
+        classNames={{
+          label: "text-gray-200 !important", // Color gris claro para el título del input
+        }}
       />
       <Input
         isRequired
@@ -61,6 +64,9 @@ export default function CrearAutor({ onSuccess }: Props) {
         type="text"
         value={nacionalidad}
         onChange={(e) => setNacionalidad(e.target.value)}
+        classNames={{
+          label: "text-gray-200 !important", // Color gris claro para el título del input
+        }}
       />
       <Button
         className="text-sm bg-gray-300 text-gray-700"

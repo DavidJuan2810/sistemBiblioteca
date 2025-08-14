@@ -5,7 +5,7 @@ export interface Autor {
   id: number;
   nombre: string;
   nacionalidad: string;
-  libro?: { id: number }[];
+  libro?: { id: number; titulo: string }[];
 }
 
 export const useListarAutores = () => {

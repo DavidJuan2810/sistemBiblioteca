@@ -35,14 +35,13 @@ export default function ActualizarBiblioteca({ bibliotecaId, onSuccess }: Props)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔹 Validaciones antes de enviar
     if (!nombre.trim() || !ubicacion.trim()) {
       showToast("Nombre y ubicación son obligatorios", "error");
       return;
     }
 
     actualizarBibliotecaMutation.mutate(
-      { nombre, ubicacion, libroIds }, // ✅ enviamos solo IDs
+      { nombre, ubicacion, libroIds },
       {
         onSuccess: () => {
           showToast("Biblioteca actualizada correctamente", "success");

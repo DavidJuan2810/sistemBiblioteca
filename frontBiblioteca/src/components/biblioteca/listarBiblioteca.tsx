@@ -1,4 +1,4 @@
-import  { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -9,16 +9,22 @@ import {
   Pagination,
   Spinner,
   Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
   getKeyValue,
 } from "@heroui/react";
+import { HiDotsHorizontal } from "react-icons/hi";
 import { useListarBibliotecas, Biblioteca } from "../../hook/biblioteca/useBiblioteca";
 
 interface Props {
   onEditarBiblioteca: (id: number) => void;
+  onVerBiblioteca: (id: number) => void;
   onAbrirCrearModal: () => void;
 }
 
-export default function ListaBibliotecas({ onEditarBiblioteca, onAbrirCrearModal }: Props) {
+export default function ListaBibliotecas({ onEditarBiblioteca, onVerBiblioteca, onAbrirCrearModal }: Props) {
   const { data: bibliotecas, isLoading, error } = useListarBibliotecas();
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
@@ -36,7 +42,6 @@ export default function ListaBibliotecas({ onEditarBiblioteca, onAbrirCrearModal
 
   return (
     <div className="w-full">
-      {/* Botón arriba a la izquierda */}
       <div className="flex justify-start items-center mb-2">
         <Button
           className="text-sm bg-gray-300 text-gray-700"
@@ -83,29 +88,30 @@ export default function ListaBibliotecas({ onEditarBiblioteca, onAbrirCrearModal
                 if (keyStr === "acciones") {
                   return (
                     <TableCell>
-                      <Button
-                        size="sm"
-                        className="text-sm bg-gray-300 text-gray-700"
-                        onPress={() => onEditarBiblioteca(biblioteca.id)}
-                      >
-                        Editar
-                      </Button>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button variant="light" isIconOnly>
+                            <HiDotsHorizontal className="h-5 w-5" />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Acciones">
+                          <DropdownItem key="ver" onPress={() => onVerBiblioteca(biblioteca.id)}>
+                            Consultar
+                          </DropdownItem>
+                          <DropdownItem key="editar" onPress={() => onEditarBiblioteca(biblioteca.id)}>
+                            Editar
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
                     </TableCell>
                   );
                 }
                 if (keyStr === "libros") {
                   return (
                     <TableCell>
-                      {biblioteca.libros && biblioteca.libros.length > 0 ? (
-                        biblioteca.libros.map((libro, index) => (
-                          <span key={libro.id}>
-                            {libro.titulo}
-                            {index < biblioteca.libros!.length - 1 ? ", " : ""}
-                          </span>
-                        ))
-                      ) : (
-                        "Sin libros"
-                      )}
+                      {biblioteca.libros && biblioteca.libros.length > 0
+                        ? biblioteca.libros.map((libro) => `${libro.id} - ${libro.titulo}`).join(", ")
+                        : "Sin libros"}
                     </TableCell>
                   );
                 }

@@ -1,11 +1,18 @@
 import { PrismaClient } from '../generated/prisma/client.js';  
-const prisma = new PrismaClient;
+const prisma = new PrismaClient();
 
 // Obtener todas las bibliotecas
 export const obtenerBiblioteca = async (req, res) => {
   try {
     const bibliotecas = await prisma.bibliotecas.findMany({
-      include: { libros: true } 
+      include: {
+        libros: {
+          select: {
+            id: true,
+            titulo: true,
+          },
+        },
+      },
     });
     res.json(bibliotecas);
   } catch (error) {
@@ -20,7 +27,14 @@ export const obtenerBibliotecaPorId = async (req, res) => {
     const { id } = req.params;
     const biblioteca = await prisma.bibliotecas.findUnique({
       where: { id: parseInt(id) },
-      include: { libros: true } 
+      include: {
+        libros: {
+          select: {
+            id: true,
+            titulo: true,
+          },
+        },
+      },
     });
 
     if (!biblioteca) {
@@ -37,7 +51,7 @@ export const obtenerBibliotecaPorId = async (req, res) => {
 // Crear una nueva biblioteca
 export const crearBiblioteca = async (req, res) => {
   try {
-    const { nombre, ubicacion, libroIds } = req.body; // Cambiado de 'libro' a 'libroIds'
+    const { nombre, ubicacion, libroIds } = req.body;
 
     const nuevaBiblioteca = await prisma.bibliotecas.create({
       data: {
@@ -45,7 +59,14 @@ export const crearBiblioteca = async (req, res) => {
         ubicacion,
         libros: libroIds ? { connect: libroIds.map(id => ({ id })) } : undefined
       },
-      include: { libros: true } 
+      include: { 
+        libros: {
+          select: {
+            id: true,
+            titulo: true,
+          },
+        },
+      } 
     });
 
     res.status(200).json(nuevaBiblioteca);
@@ -59,7 +80,7 @@ export const crearBiblioteca = async (req, res) => {
 export const actualizarBiblioteca = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, ubicacion, libros } = req.body;
+    const { nombre, ubicacion, libroIds } = req.body; // Cambiado de 'libros' a 'libroIds'
 
     const bibliotecaExistente = await prisma.bibliotecas.findUnique({
       where: { id: parseInt(id) }
@@ -74,9 +95,16 @@ export const actualizarBiblioteca = async (req, res) => {
       data: {
         nombre,
         ubicacion,
-        libros: libros ? { set: libros.map(id => ({ id })) } : undefined 
+        libros: libroIds ? { set: libroIds.map(id => ({ id })) } : undefined 
       },
-      include: { libros: true } 
+      include: { 
+        libros: {
+          select: {
+            id: true,
+            titulo: true,
+          },
+        },
+      } 
     });
 
     res.json(bibliotecaActualizada);
@@ -85,7 +113,6 @@ export const actualizarBiblioteca = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar la biblioteca.' });
   }
 };
-
 
 // Eliminar una biblioteca
 export const eliminarBiblioteca = async (req, res) => {

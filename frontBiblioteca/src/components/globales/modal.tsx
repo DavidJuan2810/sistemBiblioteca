@@ -22,12 +22,12 @@ export default function ModalGlobal({
     <Modal
       backdrop="opaque"
       classNames={{
-        body: "py-6",
-        backdrop: "bg-[#292f46]/50 backdrop-opacity-40",
-        base: "border-[#292f46] bg-[#19172c] dark:bg-[#19172c] text-[#a8b0d3]",
-        header: "border-b-[1px] border-[#292f46]",
-        footer: "border-t-[1px] border-[#292f46]",
-        closeButton: "hover:bg-white/5 active:bg-white/10",
+        body: "py-6 [&>form label]:text-gray-800 [&>form label]:!important",
+        backdrop: "bg-gray-600/50 backdrop-opacity-40",
+        base: "border-gray-800 bg-gray-700 dark:bg-gray-800 text-gray-200",
+        header: "border-b-[1px] border-gray-600",
+        footer: "border-t-[1px] border-gray-600",
+        closeButton: "hover:bg-gray-500/20 active:bg-gray-400/30",
       }}
       isOpen={isOpen}
       radius="lg"
@@ -44,7 +44,7 @@ export default function ModalGlobal({
               </Button>
               {onAction && (
                 <Button
-                  className="bg-[#6f4ef2] shadow-lg shadow-indigo-500/20"
+                  className="bg-[#6f4ef2] shadow-lg shadow-indigo-500/20 text-gray-200"
                   onPress={() => {
                     onAction();
                     onClose();

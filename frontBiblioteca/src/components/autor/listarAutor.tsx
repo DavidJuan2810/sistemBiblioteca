@@ -9,16 +9,22 @@ import {
   Pagination,
   Spinner,
   Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
   getKeyValue,
 } from "@heroui/react";
+import { HiDotsHorizontal } from "react-icons/hi"; // Using react-icons for three-dot icon
 import { useListarAutores, Autor } from "../../hook/useAutor";
 
 interface Props {
   onEditarAutor: (id: number) => void;
+  onVerAutor: (id: number) => void; // Added for consult functionality
   onAbrirCrearModal: () => void;
 }
 
-export default function ListaAutores({ onEditarAutor, onAbrirCrearModal }: Props) {
+export default function ListaAutores({ onEditarAutor, onVerAutor, onAbrirCrearModal }: Props) {
   const { data: autores, isLoading, error } = useListarAutores();
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
@@ -36,11 +42,10 @@ export default function ListaAutores({ onEditarAutor, onAbrirCrearModal }: Props
 
   return (
     <div className="w-full">
-      {/* Botón arriba a la izquierda (llama correctamente la prop) */}
       <div className="flex justify-start items-center mb-2">
         <Button
           className="text-sm bg-gray-300 text-gray-700"
-          onPress={() => onAbrirCrearModal()} // <-- llama al modal del padre
+          onPress={() => onAbrirCrearModal()}
         >
           Crear Autor
         </Button>
@@ -80,13 +85,21 @@ export default function ListaAutores({ onEditarAutor, onAbrirCrearModal }: Props
               {(columnKey) =>
                 columnKey === "acciones" ? (
                   <TableCell>
-                    <Button
-                      size="sm"
-                      className="text-sm bg-gray-300 text-gray-700"
-                      onPress={() => onEditarAutor(autor.id)}
-                    >
-                      Editar
-                    </Button>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button variant="light" isIconOnly>
+                          <HiDotsHorizontal className="h-5 w-5" />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="Acciones">
+                        <DropdownItem key="ver" onPress={() => onVerAutor(autor.id)}>
+                          Consultar
+                        </DropdownItem>
+                        <DropdownItem key="editar" onPress={() => onEditarAutor(autor.id)}>
+                          Editar
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
                   </TableCell>
                 ) : (
                   <TableCell>{getKeyValue(autor, columnKey as string)}</TableCell>

@@ -4,32 +4,50 @@ import ModalGlobal from "../components/globales/modal";
 import ListaLibros from "../components/libro/listarLibro";
 import CrearLibro from "../components/libro/crearLibro";
 import ActualizarLibro from "../components/libro/actualizarLibro";
+import { useListarLibros } from "../hook/libro/useLibro";
+import { Spinner } from "@heroui/react";
 
 export default function LibrosPage() {
   const {
     isOpen: isCrearOpen,
     onOpen: onCrearOpen,
     onOpenChange: onCrearOpenChange,
-    onClose: onCrearClose
+    onClose: onCrearClose,
   } = useDisclosure();
 
   const {
     isOpen: isEditarOpen,
     onOpen: onEditarOpen,
     onOpenChange: onEditarOpenChange,
-    onClose: onEditarClose
+    onClose: onEditarClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isVerOpen,
+    onOpen: onVerOpen,
+    onOpenChange: onVerOpenChange,
+  } = useDisclosure(); // Removed onClose: onVerClose
+
   const [libroSeleccionadoId, setLibroSeleccionadoId] = useState<number | null>(null);
+  const [libroViewId, setLibroViewId] = useState<number | null>(null);
+  const { data: libros, isLoading, error } = useListarLibros();
 
   const handleEditarLibro = (id: number) => {
     setLibroSeleccionadoId(id);
     onEditarOpen();
   };
 
+  const handleVerLibro = (id: number) => {
+    setLibroViewId(id);
+    onVerOpen();
+  };
+
   const handleAbrirCrearModal = () => {
     onCrearOpen();
   };
+
+  // Find the selected book from the libros data
+  const libroSeleccionado = libros?.find((libro) => libro.id === libroViewId);
 
   return (
     <div className="space-y-8">
@@ -37,6 +55,7 @@ export default function LibrosPage() {
 
       <ListaLibros
         onEditarLibro={handleEditarLibro}
+        onVerLibro={handleVerLibro}
         onAbrirCrearModal={handleAbrirCrearModal}
       />
 
@@ -59,6 +78,40 @@ export default function LibrosPage() {
               libroId={libroSeleccionadoId}
               onSuccess={onEditarClose}
             />
+          )
+        }
+      />
+
+      {/* Modal para Consultar Detalles */}
+      <ModalGlobal
+        isOpen={isVerOpen}
+        onOpenChange={onVerOpenChange}
+        title="Detalles del Libro"
+        children={
+          isLoading ? (
+            <Spinner />
+          ) : error ? (
+            <div>Error al cargar los datos: {error.message}</div>
+          ) : libroSeleccionado ? (
+            <div className="flex flex-col gap-4 text-gray-200">
+              <div>
+                <strong className="font-semibold">Título:</strong> {libroSeleccionado.titulo}
+              </div>
+              <div>
+                <strong className="font-semibold">Publicación:</strong>{" "}
+                {new Date(libroSeleccionado.publicacion).toLocaleDateString()}
+              </div>
+              <div>
+                <strong className="font-semibold">Autores:</strong>{" "}
+                {libroSeleccionado.autores?.map((a) => a.nombre).join(", ") || "Ninguno"}
+              </div>
+              <div>
+                <strong className="font-semibold">Sedes:</strong>{" "}
+                {libroSeleccionado.sede?.map((s) => s.nombre).join(", ") || "Ninguna"}
+              </div>
+            </div>
+          ) : (
+            <div>No se encontró el libro</div>
           )
         }
       />

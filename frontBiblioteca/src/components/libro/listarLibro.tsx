@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import  { useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -9,16 +9,22 @@ import {
   Pagination,
   Spinner,
   Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
   getKeyValue,
 } from "@heroui/react";
+import { HiDotsHorizontal } from "react-icons/hi"; // Changed to react-icons for three-dot icon
 import { useListarLibros, Libro } from "../../hook/libro/useLibro";
 
 interface Props {
   onEditarLibro: (id: number) => void;
+  onVerLibro: (id: number) => void;
   onAbrirCrearModal: () => void;
 }
 
-export default function ListaLibros({ onEditarLibro, onAbrirCrearModal }: Props) {
+export default function ListaLibros({ onEditarLibro, onVerLibro, onAbrirCrearModal }: Props) {
   const { data: libros, isLoading, error } = useListarLibros();
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
@@ -83,13 +89,21 @@ export default function ListaLibros({ onEditarLibro, onAbrirCrearModal }: Props)
                 if (columnKey === "acciones") {
                   return (
                     <TableCell>
-                      <Button
-                        size="sm"
-                        className="text-sm bg-gray-300 text-gray-700"
-                        onPress={() => onEditarLibro(libro.id)}
-                      >
-                        Editar
-                      </Button>
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button variant="light" isIconOnly>
+                            <HiDotsHorizontal className="h-5 w-5" />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Acciones">
+                          <DropdownItem key="ver" onPress={() => onVerLibro(libro.id)}>
+                            Consultar
+                          </DropdownItem>
+                          <DropdownItem key="editar" onPress={() => onEditarLibro(libro.id)}>
+                            Editar
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
                     </TableCell>
                   );
                 }

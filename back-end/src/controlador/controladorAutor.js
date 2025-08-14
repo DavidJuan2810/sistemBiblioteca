@@ -7,12 +7,13 @@ export const obtenerAutores = async (req, res) => {
     const autores = await prisma.autor.findMany({
       include: {
         libro: {
-          include: {
-            sede: true,
-            autores: true
-          }
-        }
-      }
+          select: {
+            id: true,
+            titulo: true, 
+            sede: true, 
+          },
+        },
+      },
     });
     res.json(autores);
   } catch (error) {
@@ -31,10 +32,10 @@ export const obtenerAutorPorId = async (req, res) => {
         libro: {
           include: {
             sede: true,
-            autores: true
-          }
-        }
-      }
+            autores: true,
+          },
+        },
+      },
     });
 
     if (!autor) {

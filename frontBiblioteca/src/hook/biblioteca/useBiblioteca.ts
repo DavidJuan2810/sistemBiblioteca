@@ -23,9 +23,7 @@ export const useListarBibliotecas = () => {
         },
       });
 
-      
       return data;
     },
   });
 };
-

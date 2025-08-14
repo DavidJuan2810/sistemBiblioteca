@@ -49,6 +49,9 @@ export default function CrearBiblioteca({ onSuccess }: Props) {
         placeholder="Ingrese el nombre"
         value={nombre}
         onChange={(e) => setNombre(e.target.value)}
+        classNames={{
+          label: "text-gray-200 !important", // Color más claro con prioridad
+        }}
       />
       <Input
         isRequired
@@ -57,6 +60,9 @@ export default function CrearBiblioteca({ onSuccess }: Props) {
         placeholder="Ingrese la ubicación"
         value={ubicacion}
         onChange={(e) => setUbicacion(e.target.value)}
+        classNames={{
+          label: "text-gray-200 !important", 
+        }}
       />
       <Select
         label="Libros"
@@ -65,6 +71,9 @@ export default function CrearBiblioteca({ onSuccess }: Props) {
         onSelectionChange={(keys) => {
           const ids = Array.from(keys as Set<string>).map(Number);
           setLibroIds(ids);
+        }}
+        classNames={{
+          label: "text-gray-200 !important", // Color más claro con prioridad
         }}
       >
         {(libros ?? []).map((libro) => (
