@@ -65,7 +65,7 @@ export default function CrearAutor({ onSuccess }: Props) {
         value={nacionalidad}
         onChange={(e) => setNacionalidad(e.target.value)}
         classNames={{
-          label: "text-gray-200 !important", // Color gris claro para el título del input
+          label: "text-gray-200 !important", 
         }}
       />
       <Button

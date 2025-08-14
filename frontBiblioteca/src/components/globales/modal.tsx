@@ -40,7 +40,7 @@ export default function ModalGlobal({
             <ModalBody>{children}</ModalBody>
             <ModalFooter>
               <Button className="text-sm bg-gray-300 text-gray-700" variant="light" onPress={onClose}>
-                Close
+                Cerrar
               </Button>
               {onAction && (
                 <Button
